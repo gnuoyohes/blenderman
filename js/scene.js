@@ -1,35 +1,19 @@
-var scene, terrainScene, decoScene, skyDome, skyLight, sand, ground;
-
-// Helpers
-
-function makePlatform( url ) {
-	var placeholder = new THREE.Object3D();
-	var loader = new THREE.ObjectLoader();
-	loader.load( url, function ( platform ) {
-		placeholder.add( platform );
-	} );
-	return placeholder;
+function buildGround() {
+  var groundTexture = new THREE.TextureLoader().load("textures/terrain/grasslight-big.jpg");
+  groundTexture.wrapS = THREE.RepeatWrapping;
+  groundTexture.wrapT = THREE.RepeatWrapping;
+  groundTexture.repeat.set(1000, 1000);
+  var ground = new THREE.Mesh(
+    new THREE.PlaneBufferGeometry(10000, 10000),
+    new THREE.MeshBasicMaterial({map: groundTexture})
+  );
+  ground.position.y = 0;
+  ground.rotation.x = -0.5 * Math.PI;
+  ground.name = "ground";
+  return ground;
 }
 
-function applySmoothing(smoothing, o) {
-  var m = terrainScene.children[0];
-  var g = m.geometry.vertices;
-  if (smoothing === 'Conservative (0.5)') THREE.Terrain.SmoothConservative(g, o, 0.5);
-  if (smoothing === 'Conservative (1)') THREE.Terrain.SmoothConservative(g, o, 1);
-  if (smoothing === 'Conservative (10)') THREE.Terrain.SmoothConservative(g, o, 10);
-  else if (smoothing === 'Gaussian (0.5, 7)') THREE.Terrain.Gaussian(g, o, 0.5, 7);
-  else if (smoothing === 'Gaussian (1.0, 7)') THREE.Terrain.Gaussian(g, o, 1, 7);
-  else if (smoothing === 'Gaussian (1.5, 7)') THREE.Terrain.Gaussian(g, o, 1.5, 7);
-  else if (smoothing === 'Gaussian (1.0, 5)') THREE.Terrain.Gaussian(g, o, 1, 5);
-  else if (smoothing === 'Gaussian (1.0, 11)') THREE.Terrain.Gaussian(g, o, 1, 11);
-  else if (smoothing === 'GaussianBox') THREE.Terrain.GaussianBoxBlur(g, o, 1, 3);
-  else if (smoothing === 'Mean (0)') THREE.Terrain.Smooth(g, o, 0);
-  else if (smoothing === 'Mean (1)') THREE.Terrain.Smooth(g, o, 1);
-  else if (smoothing === 'Mean (8)') THREE.Terrain.Smooth(g, o, 8);
-  else if (smoothing === 'Median') THREE.Terrain.SmoothMedian(g, o);
-  THREE.Terrain.Normalize(m, o);
-}
-
+// borrowed from https://github.com/IceCreamYou/THREE.Terrain
 function buildTree() {
   var material = [
     new THREE.MeshLambertMaterial({ color: 0x3d2817 }), // brown
@@ -67,29 +51,52 @@ function buildTree() {
   return m;
 }
 
-// Scene
+// borrowed from https://github.com/CoryG89/MoonDemo
+function buildMoon() {
+  var radius = 100;
+  var xSegments = 50;
+  var ySegments = 50;
+  var geo = new THREE.SphereGeometry(radius, xSegments, ySegments);
+  var moonTexture = new THREE.TextureLoader().load("textures/moon/moon.jpg");
+  var mat = new THREE.MeshBasicMaterial({map: moonTexture})
+  var mesh = new THREE.Mesh(geo, mat);
+  mesh.position.set(-1000, 500, -1000);
+  mesh.rotation.set(0, 180, 0);
+  return mesh;
+}
+
+// borrowed from https://github.com/CoryG89/MoonDemo
+function buildSky() {
+  var envMap = new THREE.CubeTextureLoader().load( [
+			'textures/starfield/right.png', // right
+			'textures/starfield/left.png', // left
+			'textures/starfield/top.png', // top
+			'textures/starfield/bottom.png', // bottom
+			'textures/starfield/back.png', // back
+			'textures/starfield/front.png' // front
+		] );
+	return envMap;
+}
+
 function getScene() {
-  scene = new THREE.Scene();
+  var scene = new THREE.Scene();
+  scene.background = buildSky();
+  scene.add(buildMoon());
+  scene.add(buildGround());
 
-  var groundTexture = new THREE.TextureLoader().load("textures/terrain/grasslight-big.jpg");
-  groundTexture.wrapS = THREE.RepeatWrapping;
-  groundTexture.wrapT = THREE.RepeatWrapping;
-  groundTexture.repeat.set(1000, 1000);
-  ground = new THREE.Mesh(
-    new THREE.PlaneBufferGeometry(10000, 10000),
-    new THREE.MeshBasicMaterial({map: groundTexture})
-  );
-  ground.position.y = 0;
-  ground.rotation.x = -0.5 * Math.PI;
-  ground.name = "ground";
-  scene.add(ground);
+  // randomly generate trees
+  for (i=0; i<50; i++) {
+    var tree = buildTree();
+    tree.position.set(Math.random()*-100, 0, Math.random()*-100);
+    tree.scale.set(0.5, 0.5, 0.5);
+    scene.add(tree);
+  }
 
-  // skyLight = new THREE.DirectionalLight(0xe8bdb0, 1.5);
-  // skyLight.position.set(2950, 2625, -160); // Sun on the sky texture
+  // skyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+  // skyLight.position.set(1000, 1000, 1000); // Sun on the sky texture
   // scene.add(skyLight);
-  // var light = new THREE.DirectionalLight(0xc3eaff, 0.75);
-  // light.position.set(-1, -0.5, -1);
-  // scene.add(light);
+  var light = new THREE.HemisphereLight( 0xffffff ); // soft white light
+  scene.add( light );
 
   // scene.fog = new THREE.FogExp2( 0xefd1b5, 0.05 );
   scene.fog = new THREE.FogExp2( 0x000000, 0.05 );
