@@ -85,21 +85,21 @@ function getScene() {
   scene.add(buildGround());
 
   // randomly generate trees
-  for (i=0; i<50; i++) {
+  for (i=0; i<500; i++) {
     var tree = buildTree();
-    tree.position.set(Math.random()*-100, 0, Math.random()*-100);
-    tree.scale.set(0.5, 0.5, 0.5);
+    tree.position.set(Math.random()*400-200, 0, Math.random()*400-200);
+    tree.scale.set(Math.random()*.5+.25, Math.random()*.5+.25, Math.random()*.5+.25);
     scene.add(tree);
   }
 
-  // skyLight = new THREE.DirectionalLight(0xffffff, 1.5);
-  // skyLight.position.set(1000, 1000, 1000); // Sun on the sky texture
-  // scene.add(skyLight);
-  var light = new THREE.HemisphereLight( 0xffffff ); // soft white light
-  scene.add( light );
+  skyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+  skyLight.position.set(1000, 1000, 1000); // Sun on the sky texture
+  scene.add(skyLight);
+  // var light = new THREE.HemisphereLight( 0xffffff ); // soft white light
+  // scene.add( light );
 
   // scene.fog = new THREE.FogExp2( 0xefd1b5, 0.05 );
-  scene.fog = new THREE.FogExp2( 0x000000, 0.05 );
+  scene.fog = new THREE.FogExp2( 0x01010f, 0.05 );
 
   return scene;
 }
