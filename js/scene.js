@@ -99,7 +99,7 @@ function getScene() {
   // scene.add( light );
 
   // scene.fog = new THREE.FogExp2( 0xefd1b5, 0.05 );
-  scene.fog = new THREE.Fog( 0x01010f, 0.05, 50);
+  // scene.fog = new THREE.Fog( 0x01010f, 0.05, 50);
 
   return scene;
 }
