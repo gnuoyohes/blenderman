@@ -139,6 +139,7 @@ var flashlight = new THREE.SpotLight(0xfff9bc);
 flashlight.angle = Math.PI / 10;
 flashlight.distance = 100;
 flashlight.castShadow = true;
+flashlight.decay = 2;
 var scene = getScene();
 scene.add(flashlight);
 scene.add(flashlight.target);

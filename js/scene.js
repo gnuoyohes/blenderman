@@ -5,7 +5,7 @@ function buildGround() {
   groundTexture.repeat.set(1000, 1000);
   var ground = new THREE.Mesh(
     new THREE.PlaneBufferGeometry(10000, 10000),
-    new THREE.MeshStandardMaterial({map: groundTexture})
+    new THREE.MeshPhongMaterial({map: groundTexture})
   );
   ground.position.y = 0;
   ground.rotation.x = -0.5 * Math.PI;
@@ -92,9 +92,9 @@ function getScene() {
     scene.add(tree);
   }
 
-  // skyLight = new THREE.DirectionalLight(0xffffff, 1.5);
-  // skyLight.position.set(1000, 1000, 1000); // Sun on the sky texture
-  // scene.add(skyLight);
+  moonlight = new THREE.DirectionalLight(0xe0d2c5, 0.1);
+  moonlight.position.set(-1000, 500, -1000); // Sun on the sky texture
+  scene.add(moonlight);
   // var light = new THREE.HemisphereLight( 0xffffff ); // soft white light
   // scene.add( light );
 
