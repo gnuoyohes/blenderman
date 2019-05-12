@@ -133,13 +133,16 @@ var updateCamera = ( function () {
 // init 3D stuff
 var renderer = new THREE.WebGLRenderer( { antialias: true } );
 renderer.setPixelRatio( window.devicePixelRatio );
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild( renderer.domElement );
 var camera = new THREE.PerspectiveCamera( 60, 1, 0.1, 9000 );
-var flashlight = new THREE.SpotLight(0xfff9bc);
-flashlight.angle = Math.PI / 10;
+var flashlight = new THREE.SpotLight(0xffffff);
+flashlight.angle = Math.PI/6;
+flashlight.penumbra = 0.2
 flashlight.distance = 100;
 flashlight.castShadow = true;
-flashlight.decay = 2;
+flashlight.decay = 3;
 var scene = getScene();
 scene.add(flashlight);
 scene.add(flashlight.target);

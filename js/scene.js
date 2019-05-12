@@ -2,14 +2,15 @@ function buildGround() {
   var groundTexture = new THREE.TextureLoader().load("textures/terrain/grasslight-big.jpg");
   groundTexture.wrapS = THREE.RepeatWrapping;
   groundTexture.wrapT = THREE.RepeatWrapping;
-  groundTexture.repeat.set(1000, 1000);
+  groundTexture.repeat.set(100, 100);
   var ground = new THREE.Mesh(
-    new THREE.PlaneBufferGeometry(10000, 10000),
+    new THREE.PlaneBufferGeometry(1000, 1000),
     new THREE.MeshPhongMaterial({map: groundTexture})
   );
   ground.position.y = 0;
   ground.rotation.x = -0.5 * Math.PI;
   ground.name = "ground";
+  ground.receiveShadow = true;
   return ground;
 }
 
@@ -48,12 +49,13 @@ function buildTree() {
 
   m.scale.x = m.scale.z = 5;
   m.scale.y = 1.25;
+  m.castShadow = true;
   return m;
 }
 
 // borrowed from https://github.com/CoryG89/MoonDemo
 function buildMoon() {
-  var radius = 100;
+  var radius = 80;
   var xSegments = 50;
   var ySegments = 50;
   var geo = new THREE.SphereGeometry(radius, xSegments, ySegments);
@@ -95,8 +97,9 @@ function getScene() {
   moonlight = new THREE.DirectionalLight(0xe0d2c5, 0.07);
   moonlight.position.set(-1000, 500, -1000); // Sun on the sky texture
   scene.add(moonlight);
-  // var light = new THREE.HemisphereLight( 0xffffff ); // soft white light
-  // scene.add( light );
+
+  var ambientLight = new THREE.AmbientLight(0xffffff, 0.01);
+  scene.add( ambientLight );
 
   // scene.fog = new THREE.FogExp2( 0xefd1b5, 0.05 );
   // scene.fog = new THREE.Fog( 0x01010f, 0.05, 50);
