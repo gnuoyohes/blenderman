@@ -1,0 +1,90 @@
+<head>
+    <title> COS426 Assignment 5 Cloth Simulation &mdash; Writeup</title>
+    <link href="css/style.css" type="text/css" rel="stylesheet"/>
+</head>
+
+<body>
+<script src="js/student.js"> </script>
+<script src="js/writeup.js"> </script>
+<div class="top">
+<div class="main_div">
+
+<h1> <div class=assignment>COS426 Assignment 5</div> Cloth Simulation &mdash; Writeup</h1>
+<h2>Switch to: <a href='index.html'>Simulation</a></h2>
+<div class='selectable'>
+<h2 id='student'></h2>
+
+<ul>
+<li>(1.5) <a href='#Cloth'>Cloth</a></li>
+<li>(1.5) <a href='#Constraints'>Constraints</a></li>
+<li>(1.0) <a href='#Gravity'>Gravity</a></li>
+<li>(1.5) <a href='#Verlet+integration'>Verlet integration</a></li>
+<li>(0.5) <a href='#Floor+collision'>Floor collision</a></li>
+<li>(1.5) <a href='#Sphere+collision'>Sphere collision</a></li>
+<li>(1.5) <a href='#Box+collision'>Box collision</a></li>
+<li>(1.0+) <a href='#Extensions'>Extensions</a></li>
+<li><a href='#Collaboration'>Collaboration</a></li>
+<li><a href='#Feedback'>Feedback</a></li>
+</ul></div>
+
+<p><hr><p><a name='Cloth'></a><h2>Cloth</h2><p><hr><p>
+Built constraints between particles based on the diagram on the assignment page. Took care not to index out of bounds.
+
+<p><hr><p><a name='Constraints'></a><h2>Constraints</h2><p><hr><p>
+Followed the algorithm on the assignment page, where <code>v_corr</code> points from <code>p1</code> to <code>p2</code>. Then, added <code>0.5*v_corr</code>
+to <code>p1</code> and subtracted <code>0.5*v_corr</code> from <code>p2</code>.
+
+<p><hr><p><a name='Gravity'></a><h2>Gravity</h2><p><hr><p>
+For each particle <code>p</code>, calculated <code>force = p.mass*GRAVITY</code>. Then, set the particle's net force to <code>(0, -1*force, 0)</code>.
+
+<p><hr><p><a name='Verlet+integration'></a><h2>Verlet integration</h2><p><hr><p>
+Followed the algorithm on the assignment page, with the v*dt approximation. After the Verlet integration, reset the particle's net force.
+
+<br><br><img src='results/verlet.png'>
+
+<p><hr><p><a name='Floor+collision'></a><h2>Floor collision</h2><p><hr><p>
+If the particle's y coordinate was below GROUND_Y, set it to GROUND_Y.
+
+<br><br><img src='results/floor.png'>
+
+<p><hr><p><a name='Sphere+collision'></a><h2>Sphere collision</h2><p><hr><p>
+Followed the algorithm on the assignment page. Used the vector from the particle's position to the sphere position to determine whether it was inside or not.
+Used that same vector and the ratio of the radius length to the length of that vector to then find the projection of the particle onto the sphere surface.
+
+<br><br><img src='results/sphere.png'>
+
+<p><hr><p><a name='Box+collision'></a><h2>Box collision</h2><p><hr><p>
+Followed the algorithm on the assignment page. Calculated the x, y, and z distances from the particle's position to both <code>min</code> and <code>max</code>
+of the box, and set the particle's corresponding coordinate to the coordinate with the shortest distance from it.
+
+<br><br><img src='results/box.png'>
+
+<p><hr><p><a name='Extensions'></a><h2>Extensions</h2><p><hr><p>
+Wind: set wind strength to <code>50*sin(time/1000)</code>, its x direction to <code>sin(time/5000)</code>, and its y direction to <code>cos(time/7000)</code>.
+
+<br><br><img src='results/wind.gif'>
+
+<p><hr><p><a name='Collaboration'></a><h2>Collaboration</h2><p><hr><p>
+Please write down the names of the students that you collaborated with for this assignment.
+
+<p><hr><p><a name='Feedback'></a><h2>[OPTIONAL] Feedback</h2><p><hr><p
+<p>As you might already know, this is a brand new animation assignment for COS 426 and replaces
+an older one that deals with implementing various small particle systems. You can find the
+assignment from last year <a href="https://www.cs.princeton.edu/courses/archive/spring18/cos426/assign/A5/">
+here</a>.
+
+<p>We don't expect an assignment to go perfectly smoothly in its debut semester, so we would
+greatly appreciate any feedback you can give us about your experience working on this assignment.
+For example, approximately how many hours did you spend on it?
+What parts were the most difficult or confusing to work through?
+Do you have any suggestions on how to improve this assignment for the future?
+
+<p>Thank you for your feedback! Please write below:
+<br><hr>
+
+<p>My feedback:
+
+</div>
+</div>
+</body>
+</html>
