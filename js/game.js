@@ -19,7 +19,7 @@ var resetPlayer = function () {
 	}
 	if (motion.position.x > 200 || motion.position.x < -200 ||
 		motion.position.z > 200 || motion.position.z < -200) {
-		motion.position.set(Math.random()*400-200, 0, Math.random()*400-200);
+		motion.position.set(Math.random()*200-100, 0, Math.random()*200-100);
 	}
 };
 
@@ -123,6 +123,10 @@ var updateCamera = ( function () {
 		camera.quaternion.setFromEuler( euler );
 		camera.position.copy( motion.position );
 		camera.position.y += 3;
+		let direction = new THREE.Vector3();
+		camera.getWorldDirection(direction);
+		flashlight.position.copy(camera.position);
+		flashlight.target.position.addVectors(flashlight.position, direction);
 	};
 } )();
 
@@ -131,7 +135,12 @@ var renderer = new THREE.WebGLRenderer( { antialias: true } );
 renderer.setPixelRatio( window.devicePixelRatio );
 document.body.appendChild( renderer.domElement );
 var camera = new THREE.PerspectiveCamera( 60, 1, 0.1, 9000 );
+var flashlight = new THREE.SpotLight(0xfff9bc);
+flashlight.angle = Math.PI / 10;
+flashlight.distance = 100;
 var scene = getScene();
+scene.add(flashlight);
+scene.add(flashlight.target);
 
 // start the game
 var start = function ( gameLoop, gameViewportSize ) {

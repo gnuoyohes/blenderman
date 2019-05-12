@@ -92,14 +92,14 @@ function getScene() {
     scene.add(tree);
   }
 
-  skyLight = new THREE.DirectionalLight(0xffffff, 1.5);
-  skyLight.position.set(1000, 1000, 1000); // Sun on the sky texture
-  scene.add(skyLight);
+  // skyLight = new THREE.DirectionalLight(0xffffff, 1.5);
+  // skyLight.position.set(1000, 1000, 1000); // Sun on the sky texture
+  // scene.add(skyLight);
   // var light = new THREE.HemisphereLight( 0xffffff ); // soft white light
   // scene.add( light );
 
   // scene.fog = new THREE.FogExp2( 0xefd1b5, 0.05 );
-  scene.fog = new THREE.FogExp2( 0x01010f, 0.05 );
+  scene.fog = new THREE.Fog( 0x01010f, 0.05 );
 
   return scene;
 }
