@@ -2,12 +2,15 @@
 
 if (!Detector.webgl) Detector.addGetWebGLMessage();
 
+let r = 0;
+
 var motion = {
+	sprinting: false,
 	airborne: false,
 	position: new THREE.Vector3(),
-  velocity: new THREE.Vector3(),
+    velocity: new THREE.Vector3(),
 	rotation: new THREE.Vector2(),
-  spinning: new THREE.Vector2()
+    spinning: new THREE.Vector2()
 };
 motion.position.y = - 150;
 
@@ -30,6 +33,12 @@ var keyboardControls = ( function () {
 		var handler = function ( down ) {
 			return function ( e ) {
 				var index = watchedKeyCodes.indexOf( e.keyCode );
+				if ( e.shiftKey ) {
+					motion.sprinting = true;
+				}
+				else {
+					motion.sprinting = false;
+				}
 				if ( index >= 0 ) {
 					keysPressed[ watchedKeyCodes[ index ] ] = down;
 					e.preventDefault();
@@ -43,7 +52,7 @@ var keyboardControls = ( function () {
 	] );
 	var forward = new THREE.Vector3();
 	var sideways = new THREE.Vector3();
-	return function () {
+	return function (event) {
 		if ( ! motion.airborne ) {
 			// look around
 			var sx = keysPressed[ keys.UP ] ? 0.03 : ( keysPressed[ keys.DN ] ? - 0.03 : 0 );
@@ -53,8 +62,14 @@ var keyboardControls = ( function () {
 			// move around
 			forward.set( Math.sin( motion.rotation.y ), 0, Math.cos( motion.rotation.y ) );
 			sideways.set( forward.z, 0, - forward.x );
-			forward.multiplyScalar( keysPressed[ keys.W ] ? - 0.1 : ( keysPressed[ keys.S ] ? 0.1 : 0 ) );
-			sideways.multiplyScalar( keysPressed[ keys.A ] ? - 0.1 : ( keysPressed[ keys.D ] ? 0.1 : 0 ) );
+			if (motion.sprinting) {
+				forward.multiplyScalar( keysPressed[ keys.W ] ? - 0.4 : ( keysPressed[ keys.S ] ? 0.4 : 0 ) );
+				sideways.multiplyScalar( keysPressed[ keys.A ] ? - 0.4 : ( keysPressed[ keys.D ] ? 0.4 : 0 ) );
+			}
+			else {
+				forward.multiplyScalar( keysPressed[ keys.W ] ? - 0.2 : ( keysPressed[ keys.S ] ? 0.2 : 0 ) );
+				sideways.multiplyScalar( keysPressed[ keys.A ] ? - 0.2 : ( keysPressed[ keys.D ] ? 0.2 : 0 ) );
+			}
 			var combined = forward.add( sideways );
 			if ( Math.abs( combined.x ) >= Math.abs( motion.velocity.x ) ) motion.velocity.x = combined.x;
 			if ( Math.abs( combined.y ) >= Math.abs( motion.velocity.y ) ) motion.velocity.y = combined.y;
@@ -117,7 +132,7 @@ var applyPhysics = ( function () {
 
 var updateCamera = ( function () {
 	var euler = new THREE.Euler( 0, 0, 0, 'YXZ' );
-	return function () {
+	return function ( dt ) {
 		euler.x = motion.rotation.x;
 		euler.y = motion.rotation.y;
 		camera.quaternion.setFromEuler( euler );
