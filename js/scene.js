@@ -5,7 +5,7 @@ function buildGround() {
   groundTexture.repeat.set(1000, 1000);
   var ground = new THREE.Mesh(
     new THREE.PlaneBufferGeometry(10000, 10000),
-    new THREE.MeshBasicMaterial({map: groundTexture})
+    new THREE.MeshStandardMaterial({map: groundTexture})
   );
   ground.position.y = 0;
   ground.rotation.x = -0.5 * Math.PI;
@@ -99,7 +99,7 @@ function getScene() {
   // scene.add( light );
 
   // scene.fog = new THREE.FogExp2( 0xefd1b5, 0.05 );
-  scene.fog = new THREE.Fog( 0x01010f, 0.05 );
+  scene.fog = new THREE.Fog( 0x01010f, 0.05, 50);
 
   return scene;
 }

@@ -138,6 +138,7 @@ var camera = new THREE.PerspectiveCamera( 60, 1, 0.1, 9000 );
 var flashlight = new THREE.SpotLight(0xfff9bc);
 flashlight.angle = Math.PI / 10;
 flashlight.distance = 100;
+flashlight.castShadow = true;
 var scene = getScene();
 scene.add(flashlight);
 scene.add(flashlight.target);
