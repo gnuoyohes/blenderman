@@ -14,7 +14,7 @@ motion.position.y = - 150;
 // game systems code
 var resetPlayer = function () {
 	if ( motion.position.y < 0 ) {
-		motion.position.set( Math.random()*400-200, 0, Math.random()*400-200 );
+		motion.position.set( motion.position.x, 0, motion.position.z );
 		motion.velocity.multiplyScalar( 0 );
 	}
 	if (motion.position.x > 200 || motion.position.x < -200 ||

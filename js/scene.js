@@ -92,7 +92,7 @@ function getScene() {
     scene.add(tree);
   }
 
-  moonlight = new THREE.DirectionalLight(0xe0d2c5, 0.1);
+  moonlight = new THREE.DirectionalLight(0xe0d2c5, 0.07);
   moonlight.position.set(-1000, 500, -1000); // Sun on the sky texture
   scene.add(moonlight);
   // var light = new THREE.HemisphereLight( 0xffffff ); // soft white light
