@@ -182,8 +182,8 @@ scene.add(flashlight.target);
 
 // start the game
 var start = function ( gameLoop, gameViewportSize ) {
-	runSound = new Audio("/sounds/run.wav");
-	walkSound = new Audio("/sounds/walk.wav");
+	runSound = new Audio("sounds/run.wav");
+	walkSound = new Audio("sounds/walk.wav");
 	var resize = function () {
 		var viewport = gameViewportSize();
 		renderer.setSize( viewport.width, viewport.height );
