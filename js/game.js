@@ -2,8 +2,6 @@
 
 if (!Detector.webgl) Detector.addGetWebGLMessage();
 
-let deleteTitle = true;
-let deleteTitleCount = 0;
 let runSound;
 let walkSound;
 
@@ -218,13 +216,10 @@ var start = function ( gameLoop, gameViewportSize ) {
 		renderer.render( scene, camera );
 		requestAnimationFrame( render );
 
-		if (deleteTitleCount < 400)
-			deleteTitleCount++;
-		if (deleteTitleCount == 400) {
-			scene.remove(scene.getObjectByName("title"));
-			// scene.remove(scene.getObjectByName("subtitle"));
-			deleteTitleCount++;
-		}
+		// Fade out title
+		var title = scene.getObjectByName("title");
+		if (title && title.material.opacity > 0)
+			title.material.opacity -= 0.003
 	};
 	requestAnimationFrame( render )
 };

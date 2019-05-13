@@ -92,7 +92,7 @@ function addTitleText(scene) {
   		curveSegments: 12,
   		bevelEnabled: false
   	});
-    mat = new THREE.MeshLambertMaterial({ color: 0xffffff });
+    mat = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true });
     text = new THREE.Mesh(geo, mat);
     text.position.set(-1.25, 3, -4);
     text.name = "title"
