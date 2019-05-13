@@ -2,10 +2,10 @@
 
 if (!Detector.webgl) Detector.addGetWebGLMessage();
 
-let r = 0;
-
 let deleteTitle = true;
 let deleteTitleCount = 0;
+let runSound;
+let walkSound;
 
 var motion = {
 	sprinting: false,
@@ -36,9 +36,8 @@ var keyboardControls = ( function () {
 		var handler = function ( down ) {
 			return function ( e ) {
 				var index = watchedKeyCodes.indexOf( e.keyCode );
-				if ( e.shiftKey ) {
+				if ( e.shiftKey )
 					motion.sprinting = true;
-				}
 				else {
 					motion.sprinting = false;
 				}
@@ -66,12 +65,20 @@ var keyboardControls = ( function () {
 			forward.set( Math.sin( motion.rotation.y ), 0, Math.cos( motion.rotation.y ) );
 			sideways.set( forward.z, 0, - forward.x );
 			if (motion.sprinting) {
-				forward.multiplyScalar( keysPressed[ keys.W ] ? - 0.4 : ( keysPressed[ keys.S ] ? 0.4 : 0 ) );
-				sideways.multiplyScalar( keysPressed[ keys.A ] ? - 0.4 : ( keysPressed[ keys.D ] ? 0.4 : 0 ) );
+				forward.multiplyScalar( keysPressed[ keys.W ] ? - 0.5 : ( keysPressed[ keys.S ] ? 0.5 : 0 ) );
+				sideways.multiplyScalar( keysPressed[ keys.A ] ? - 0.5 : ( keysPressed[ keys.D ] ? 0.5 : 0 ) );
+				if (keysPressed[ keys.W ] || keysPressed[ keys.A ] || keysPressed[ keys.S ] || keysPressed[ keys.D ])
+					runSound.play();
 			}
 			else {
 				forward.multiplyScalar( keysPressed[ keys.W ] ? - 0.2 : ( keysPressed[ keys.S ] ? 0.2 : 0 ) );
 				sideways.multiplyScalar( keysPressed[ keys.A ] ? - 0.2 : ( keysPressed[ keys.D ] ? 0.2 : 0 ) );
+				if (keysPressed[ keys.W ] || keysPressed[ keys.A ] || keysPressed[ keys.S ] || keysPressed[ keys.D ])
+					walkSound.play();
+				else {
+					runSound.pause();
+					walkSound.pause();
+				}
 			}
 			var combined = forward.add( sideways );
 			if ( Math.abs( combined.x ) >= Math.abs( motion.velocity.x ) ) motion.velocity.x = combined.x;
@@ -167,6 +174,8 @@ scene.add(flashlight.target);
 
 // start the game
 var start = function ( gameLoop, gameViewportSize ) {
+	runSound = new Audio("/sounds/run.wav");
+	walkSound = new Audio("/sounds/walk.wav");
 	var resize = function () {
 		var viewport = gameViewportSize();
 		renderer.setSize( viewport.width, viewport.height );
@@ -192,7 +201,7 @@ var start = function ( gameLoop, gameViewportSize ) {
 			deleteTitleCount++;
 		}
 	};
-	requestAnimationFrame( render );
+	requestAnimationFrame( render )
 };
 var gameLoop = function ( dt ) {
 	resetPlayer();
