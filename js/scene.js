@@ -82,23 +82,37 @@ function buildSky() {
 
 function addTitleText(scene) {
   var fontLoader = new THREE.FontLoader();
-  var titleGeo, titleMat, title;
+  var geo, mat, text;
 
   fontLoader.load( 'fonts/filth_of_icarus.json', function ( font ) {
-  	titleGeo = new THREE.TextGeometry( 'Blenderman', {
+  	geo = new THREE.TextGeometry("Blenderman", {
   		font: font,
   		size: 0.3,
   		height: 0.2,
   		curveSegments: 12,
   		bevelEnabled: false
   	});
-    titleMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
-    title = new THREE.Mesh(titleGeo, titleMat);
-    title.position.set(-1.2, 3, -4);
-    title.name = "title";
-    scene.add(title);
+    mat = new THREE.MeshLambertMaterial({ color: 0xffffff });
+    text = new THREE.Mesh(geo, mat);
+    text.position.set(-1.25, 3, -4);
+    text.name = "title"
+    scene.add(text);
   });
-  return title;
+
+  // fontLoader.load( 'fonts/optimer_regular.typeface.json', function ( font ) {
+  // 	geo = new THREE.TextGeometry("WASD - move    Arrows - look", {
+  // 		font: font,
+  // 		size: 0.1,
+  // 		height: 0.2,
+  // 		curveSegments: 12,
+  // 		bevelEnabled: false
+  // 	});
+  //   mat = new THREE.MeshLambertMaterial({ color: 0xffffff });
+  //   text = new THREE.Mesh(geo, mat);
+  //   text.position.set(-0.9, 2.5, -4);
+  //   text.name = "subtitle"
+  //   scene.add(text);
+  // });
 }
 
 function getScene() {
@@ -124,6 +138,7 @@ function getScene() {
 
   // scene.fog = new THREE.FogExp2( 0xefd1b5, 0.05 );
   // scene.fog = new THREE.FogExp2( 0x000000, 0.3);
+  addTitleText(scene);
 
   return scene;
 }

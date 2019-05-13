@@ -4,6 +4,9 @@ if (!Detector.webgl) Detector.addGetWebGLMessage();
 
 let r = 0;
 
+let deleteTitle = true;
+let deleteTitleCount = 0;
+
 var motion = {
 	sprinting: false,
 	airborne: false,
@@ -161,7 +164,6 @@ flashlight.decay = 3;
 var scene = getScene();
 scene.add(flashlight);
 scene.add(flashlight.target);
-addTitleText(scene);
 
 // start the game
 var start = function ( gameLoop, gameViewportSize ) {
@@ -182,16 +184,13 @@ var start = function ( gameLoop, gameViewportSize ) {
 		renderer.render( scene, camera );
 		requestAnimationFrame( render );
 
-		// var title = scene.getObjectByName("title");
-		// if (title) {
-		// 	var dir = new THREE.Vector3();
-		// 	camera.getWorldDirection(dir);
-		// 	var ray = new THREE.Raycaster(camera.position, dir);
-		// 	var intersects = new THREE.Raycaster().intersectObject(title);
-	  //   if (intersects.length == 0) {
-		// 		console.log("yes");
-	  //   }
-		// }
+		if (deleteTitleCount < 400)
+			deleteTitleCount++;
+		if (deleteTitleCount == 400) {
+			scene.remove(scene.getObjectByName("title"));
+			// scene.remove(scene.getObjectByName("subtitle"));
+			deleteTitleCount++;
+		}
 	};
 	requestAnimationFrame( render );
 };
