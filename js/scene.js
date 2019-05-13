@@ -80,6 +80,27 @@ function buildSky() {
 	return envMap;
 }
 
+function addTitleText(scene) {
+  var fontLoader = new THREE.FontLoader();
+  var titleGeo, titleMat, title;
+
+  fontLoader.load( 'fonts/filth_of_icarus.json', function ( font ) {
+  	titleGeo = new THREE.TextGeometry( 'Blenderman', {
+  		font: font,
+  		size: 0.3,
+  		height: 0.2,
+  		curveSegments: 12,
+  		bevelEnabled: false
+  	});
+    titleMat = new THREE.MeshLambertMaterial({ color: 0xffffff });
+    title = new THREE.Mesh(titleGeo, titleMat);
+    title.position.set(-1.2, 3, -4);
+    title.name = "title";
+    scene.add(title);
+  });
+  return title;
+}
+
 function getScene() {
   var scene = new THREE.Scene();
   scene.background = buildSky();
@@ -102,7 +123,7 @@ function getScene() {
   scene.add( ambientLight );
 
   // scene.fog = new THREE.FogExp2( 0xefd1b5, 0.05 );
-  // scene.fog = new THREE.Fog( 0x01010f, 0.05, 50);
+  // scene.fog = new THREE.FogExp2( 0x000000, 0.3);
 
   return scene;
 }

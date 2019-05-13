@@ -161,6 +161,7 @@ flashlight.decay = 3;
 var scene = getScene();
 scene.add(flashlight);
 scene.add(flashlight.target);
+addTitleText(scene);
 
 // start the game
 var start = function ( gameLoop, gameViewportSize ) {
@@ -180,6 +181,17 @@ var start = function ( gameLoop, gameViewportSize ) {
 		gameLoop( timeElapsed );
 		renderer.render( scene, camera );
 		requestAnimationFrame( render );
+
+		// var title = scene.getObjectByName("title");
+		// if (title) {
+		// 	var dir = new THREE.Vector3();
+		// 	camera.getWorldDirection(dir);
+		// 	var ray = new THREE.Raycaster(camera.position, dir);
+		// 	var intersects = new THREE.Raycaster().intersectObject(title);
+	  //   if (intersects.length == 0) {
+		// 		console.log("yes");
+	  //   }
+		// }
 	};
 	requestAnimationFrame( render );
 };
@@ -194,4 +206,5 @@ var gameViewportSize = function () {
 		width: window.innerWidth, height: window.innerHeight
 	};
 };
+
 start( gameLoop, gameViewportSize );
