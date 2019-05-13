@@ -68,7 +68,8 @@ var keyboardControls = ( function () {
 				forward.multiplyScalar( keysPressed[ keys.W ] ? - 0.5 : ( keysPressed[ keys.S ] ? 0.5 : 0 ) );
 				sideways.multiplyScalar( keysPressed[ keys.A ] ? - 0.5 : ( keysPressed[ keys.D ] ? 0.5 : 0 ) );
 				if (keysPressed[ keys.W ] || keysPressed[ keys.A ] || keysPressed[ keys.S ] || keysPressed[ keys.D ]) {
-					runSound.play();
+					if (!runSound.isPlaying)
+						runSound.play();
 					walkSound.pause();
 				}
 				else {
@@ -80,7 +81,8 @@ var keyboardControls = ( function () {
 				forward.multiplyScalar( keysPressed[ keys.W ] ? - 0.2 : ( keysPressed[ keys.S ] ? 0.2 : 0 ) );
 				sideways.multiplyScalar( keysPressed[ keys.A ] ? - 0.2 : ( keysPressed[ keys.D ] ? 0.2 : 0 ) );
 				if (keysPressed[ keys.W ] || keysPressed[ keys.A ] || keysPressed[ keys.S ] || keysPressed[ keys.D ]) {
-					walkSound.play();
+					if (!walkSound.isPlaying)
+						walkSound.play();
 					runSound.pause();
 				}
 				else {
@@ -182,8 +184,23 @@ scene.add(flashlight.target);
 
 // start the game
 var start = function ( gameLoop, gameViewportSize ) {
-	runSound = new Audio("sounds/run.wav");
-	walkSound = new Audio("sounds/walk.wav");
+	// add sounds
+	var listener = new THREE.AudioListener();
+	camera.add( listener );
+	runSound = new THREE.Audio(listener);
+	walkSound = new THREE.Audio(listener)
+	var audioLoader = new THREE.AudioLoader();
+	audioLoader.load( 'sounds/run.wav', function( buffer ) {
+		runSound.setBuffer( buffer );
+		runSound.setLoop( true );
+		runSound.setVolume( 0.4 );
+	});
+	audioLoader.load( 'sounds/walk.wav', function( buffer ) {
+		walkSound.setBuffer( buffer );
+		walkSound.setLoop( true );
+		walkSound.setVolume( 0.4 );
+	});
+
 	var resize = function () {
 		var viewport = gameViewportSize();
 		renderer.setSize( viewport.width, viewport.height );
