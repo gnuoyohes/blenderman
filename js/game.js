@@ -4,6 +4,9 @@ if (!Detector.webgl) Detector.addGetWebGLMessage();
 
 let runSound;
 let walkSound;
+let beepSound;
+
+var applesGot = 0;
 
 var motion = {
 	sprinting: false,
@@ -170,7 +173,7 @@ renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild( renderer.domElement );
 var camera = new THREE.PerspectiveCamera( 60, 1, 0.1, 9000 );
-var flashlight = new THREE.SpotLight(0xffffff);
+var flashlight = new THREE.SpotLight(0xffffff, 2);
 flashlight.angle = Math.PI/6;
 flashlight.penumbra = 0.2
 flashlight.distance = 100;
@@ -180,23 +183,43 @@ var scene = getScene();
 scene.add(flashlight);
 scene.add(flashlight.target);
 
+// check if user got an apple
+var appleGet = function () {
+	for (i=0; i<apples.length; i++) {
+		if (camera.position.distanceToSquared(apples[i][0]) < 4) {
+			if (!beepSound.isPlaying)
+				beepSound.play();
+			scene.remove(scene.getObjectByName(apples[i][1]));
+			apples.splice(i, 1);
+			applesGot++;
+			document.getElementById("apple_count").innerHTML = applesGot;
+		}
+	}
+}
+
 // start the game
 var start = function ( gameLoop, gameViewportSize ) {
 	// add sounds
 	var listener = new THREE.AudioListener();
 	camera.add( listener );
 	runSound = new THREE.Audio(listener);
-	walkSound = new THREE.Audio(listener)
+	walkSound = new THREE.Audio(listener);
+	beepSound = new THREE.Audio(listener);
 	var audioLoader = new THREE.AudioLoader();
 	audioLoader.load( 'sounds/run.wav', function( buffer ) {
 		runSound.setBuffer( buffer );
 		runSound.setLoop( true );
 		runSound.setVolume( 0.4 );
 	});
-	audioLoader.load( 'sounds/walk.wav', function( buffer ) {
+	audioLoader.load( 'sounds/walk2.wav', function( buffer ) {
 		walkSound.setBuffer( buffer );
 		walkSound.setLoop( true );
 		walkSound.setVolume( 0.4 );
+	});
+	audioLoader.load( 'sounds/beep.wav', function( buffer ) {
+		beepSound.setBuffer( buffer );
+		beepSound.setLoop( false );
+		beepSound.setVolume( 1.0 );
 	});
 
 	var resize = function () {
@@ -228,6 +251,7 @@ var gameLoop = function ( dt ) {
 	keyboardControls();
 	applyPhysics( dt );
 	updateCamera();
+	appleGet();
 };
 var gameViewportSize = function () {
 	return {

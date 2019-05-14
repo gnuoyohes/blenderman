@@ -1,3 +1,6 @@
+var apples = [];
+var NUMAPPLES = 10;
+
 function buildGround() {
   var groundTexture = new THREE.TextureLoader().load("textures/terrain/grasslight-big.jpg");
   groundTexture.wrapS = THREE.RepeatWrapping;
@@ -115,18 +118,57 @@ function addTitleText(scene) {
   // });
 }
 
+function addApple(scene, position, name) {
+  var loader = new THREE.GLTFLoader();
+
+  loader.load( 'models/apple/scene.gltf', function ( gltf ) {
+    gltf.scene.position.copy(position);
+    gltf.scene.scale.set(0.03, 0.03, 0.03);
+    gltf.scene.name = name;
+  	scene.add( gltf.scene );
+  }, undefined, function ( error ) {
+  	console.error( error );
+  } );
+}
+
 function getScene() {
   var scene = new THREE.Scene();
   scene.background = buildSky();
   scene.add(buildMoon());
   scene.add(buildGround());
 
-  // randomly generate trees
+  var appleCount = 0;
+
+  // randomly generate trees and apples
   for (i=0; i<500; i++) {
     var tree = buildTree();
-    tree.position.set(Math.random()*400-200, 0, Math.random()*400-200);
-    tree.scale.set(Math.random()*.5+.25, Math.random()*.5+.25, Math.random()*.5+.25);
+    let xPos = Math.random()*400-200;
+    let zPos = Math.random()*400-200;
+    let xScale = Math.random()*.5+.25;
+    let yScale = Math.random()*.5+.25;
+    let zScale = Math.random()*.5+.25;
+    tree.position.set(xPos, 0, zPos);
+    tree.scale.set(xScale, yScale, zScale);
     scene.add(tree);
+
+    if (appleCount < NUMAPPLES) {
+      var appleX, appleY, appleZ;
+
+      appleY = 9.5*yScale;
+      if (Math.random() > 0.5)
+        appleX = xPos+2*xScale;
+      else
+        appleX = xPos-2*xScale;
+      if (Math.random() > 0.5)
+        appleZ = zPos+2*zScale;
+      else
+        appleZ = zPos-2*zScale;
+      let applePos = new THREE.Vector3(appleX, appleY, appleZ);
+      let appleName = "apple"+appleCount;
+      apples.push([applePos, appleName]);
+      addApple(scene, applePos, "apple"+appleCount);
+      appleCount++;
+    }
   }
 
   moonlight = new THREE.DirectionalLight(0xe0d2c5, 0.07);
