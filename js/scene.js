@@ -1,5 +1,5 @@
 var apples = [];
-var NUMAPPLES = 10;
+var NUMAPPLES = 200;
 
 function buildGround() {
   var groundTexture = new THREE.TextureLoader().load("textures/terrain/grasslight-big.jpg");

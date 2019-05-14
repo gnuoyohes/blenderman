@@ -52,6 +52,22 @@ body {
     vertical-align: top;
 }
 
+#health_div {
+    position: absolute;
+    top: 10px;
+    width: 100px;
+    text-align: center;
+    z-index: 100;
+    display:block;
+    left: 50px;
+}
+
+#health_amount {
+    font-size: 50px;
+    font-family: "Courier New", "Arial", sans-serif;
+    float: left;
+}
+
 #apples_div {
     position: absolute;
     top: 10px;

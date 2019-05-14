@@ -14,10 +14,35 @@ var motion = {
 	position: new THREE.Vector3(),
     velocity: new THREE.Vector3(),
 	rotation: new THREE.Vector2(),
+	spinning: new THREE.Vector2(),
+	health: 100
+};
+
+// motion of the antagonist
+var vmotion = {
+	airborne: false,
+	position: new THREE.Vector3(),
+    velocity: new THREE.Vector3(),
+	rotation: new THREE.Vector2(),
     spinning: new THREE.Vector2()
 };
-motion.position.y = - 150;
 
+motion.position.y = -150;
+vmotion.position.y = -150;
+vmotion.position.x = -1000;
+
+
+var resetGame = function () {
+	applesGot = 0;
+	motion.position.y = -150;
+	motion.position.x = -1000;
+	motion.health = 100;
+	vmotion.position.y = -150;
+	vmotion.position.x = -1000;
+	scene = getScene();
+	scene.add(flashlight);
+	scene.add(flashlight.target);
+}
 // game systems code
 var resetPlayer = function () {
 	if ( motion.position.y < 0 ) {
@@ -29,6 +54,41 @@ var resetPlayer = function () {
 		motion.position.set(Math.random()*200-100, 0, Math.random()*200-100);
 	}
 };
+
+var checkHealth = function () {
+	var vdist = new THREE.Vector3().subVectors(motion.position, vmotion.position).length();
+	let alpha = Math.min(vdist, 100) / 100;
+	flashlight.angle = alpha * Math.PI / 6 + (1 - alpha) * Math.PI / 15;
+	if (vdist < 10) {
+		motion.health -= 20;
+		vmotion.position.x = -1000;
+	}
+	if (motion.health <= 0) {
+		resetGame();
+	}
+	document.getElementById("health_amount").innerHTML = motion.health;
+}
+// game systems code
+var resetVillain = function () {
+	if (vmotion.position.y < 0) {
+		vmotion.position.set(vmotion.position.x, 0, vmotion.position.z );
+		vmotion.velocity.multiplyScalar( 0 );
+	}
+	if (vmotion.position.x > 220 || vmotion.position.x < -220 ||
+		vmotion.position.z > 220 || vmotion.position.z < -220) {
+		vmotion.position.set(Math.random()*400-200, 0, Math.random()*400-200);
+	}
+};
+
+var moveVillain = function () {
+	var movement = new THREE.Vector3().subVectors(motion.position, vmotion.position).normalize();
+	movement.x *= Math.random() * 2;
+	movement.z *= Math.random() * 2;
+	movement.normalize();
+	movement.multiplyScalar(Math.random()*.5);
+	vmotion.velocity.x = movement.x;
+	vmotion.velocity.z = movement.z;
+}
 
 var keyboardControls = ( function () {
 	var keys = { SP: 32, W: 87, A: 65, S: 83, D: 68, UP: 38, LT: 37, DN: 40, RT: 39 };
@@ -155,6 +215,55 @@ var applyPhysics = ( function () {
 	};
 } )();
 
+var applyVPhysics = ( function () {
+	var timeStep = 5;
+	var timeLeft = timeStep + 1;
+	var birdsEye = 100;
+	var kneeDeep = 0.4;
+	var raycaster = new THREE.Raycaster();
+	raycaster.ray.direction.set( 0, - 1, 0 );
+	var angles = new THREE.Vector2();
+	var displacement = new THREE.Vector3();
+	return function ( dt ) {
+		var platform = scene.getObjectByName("ground");
+		if ( platform ) {
+			timeLeft += dt;
+			// run several fixed-step iterations to approximate varying-step
+			dt = 5;
+			while ( timeLeft >= dt ) {
+				var time = 0.3, damping = 0.93, gravity = 0.01, tau = 2 * Math.PI;
+				raycaster.ray.origin.copy( vmotion.position );
+				raycaster.ray.origin.y += birdsEye;
+				var hits = raycaster.intersectObject( platform );
+				vmotion.airborne = true;
+				// are we above, or at most knee deep in, the platform?
+				if ( ( hits.length > 0 ) ) {
+					var actualHeight = hits[ 0 ].distance - birdsEye;
+					// collision: stick to the surface if landing on it
+					if ( ( vmotion.velocity.y <= 0 ) && ( Math.abs( actualHeight ) < kneeDeep ) ) {
+						vmotion.position.y -= actualHeight;
+						vmotion.velocity.y = 0;
+						vmotion.airborne = false;
+					}
+				}
+				if ( vmotion.airborne ) vmotion.velocity.y -= gravity;
+				angles.copy( vmotion.spinning ).multiplyScalar( time );
+				if ( ! vmotion.airborne ) vmotion.spinning.multiplyScalar( damping );
+				displacement.copy( vmotion.velocity ).multiplyScalar( time );
+				if ( ! motion.airborne ) vmotion.velocity.multiplyScalar( damping );
+				vmotion.rotation.add( angles );
+				vmotion.position.add( displacement );
+				// limit the tilt at ±0.4 radians
+				vmotion.rotation.x = Math.max( - 0.6, Math.min( + 0.6, vmotion.rotation.x ) );
+				// wrap horizontal rotation to 0...2π
+				vmotion.rotation.y += tau;
+				vmotion.rotation.y %= tau;
+				timeLeft -= dt;
+			}
+		}
+	};
+} )();
+
 var updateCamera = ( function () {
 	var euler = new THREE.Euler( 0, 0, 0, 'YXZ' );
 	return function ( dt ) {
@@ -178,7 +287,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 document.body.appendChild( renderer.domElement );
 var camera = new THREE.PerspectiveCamera( 60, 1, 0.1, 9000 );
 var flashlight = new THREE.SpotLight(0xffffff, 2);
-flashlight.angle = Math.PI/6;
+flashlight.angle = Math.PI/4;
 flashlight.penumbra = 0.2
 flashlight.distance = 100;
 flashlight.castShadow = true;
@@ -196,9 +305,9 @@ var appleGet = function () {
 			scene.remove(scene.getObjectByName(apples[i][1]));
 			apples.splice(i, 1);
 			applesGot++;
-			document.getElementById("apple_count").innerHTML = applesGot;
 		}
 	}
+	document.getElementById("apple_count").innerHTML = applesGot;
 }
 
 // start the game
@@ -256,8 +365,12 @@ var start = function ( gameLoop, gameViewportSize ) {
 };
 var gameLoop = function ( dt ) {
 	resetPlayer();
+	resetVillain();
 	keyboardControls();
+	moveVillain();
 	applyPhysics( dt );
+	applyVPhysics( dt );
+	checkHealth();
 	updateCamera();
 	appleGet();
 };
