@@ -102,20 +102,20 @@ function addTitleText(scene) {
     scene.add(text);
   });
 
-  // fontLoader.load( 'fonts/optimer_regular.typeface.json', function ( font ) {
-  // 	geo = new THREE.TextGeometry("WASD - move    Arrows - look", {
-  // 		font: font,
-  // 		size: 0.1,
-  // 		height: 0.2,
-  // 		curveSegments: 12,
-  // 		bevelEnabled: false
-  // 	});
-  //   mat = new THREE.MeshLambertMaterial({ color: 0xffffff });
-  //   text = new THREE.Mesh(geo, mat);
-  //   text.position.set(-0.9, 2.5, -4);
-  //   text.name = "subtitle"
-  //   scene.add(text);
-  // });
+  fontLoader.load( 'fonts/optimer_regular.typeface.json', function ( font ) {
+  	geo = new THREE.TextGeometry("WASD: move    Arrows: look\nShift: sprint      Space: jump", {
+  		font: font,
+  		size: 0.1,
+  		height: 0.2,
+  		curveSegments: 12,
+  		bevelEnabled: false
+  	});
+    mat = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true });
+    text = new THREE.Mesh(geo, mat);
+    text.position.set(-0.9, 2.5, -4);
+    text.name = "subtitle"
+    scene.add(text);
+  });
 }
 
 function addApple(scene, position, name) {

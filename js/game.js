@@ -99,6 +99,10 @@ var keyboardControls = ( function () {
 				var vy = keysPressed[ keys.SP ] ? 0.7 : 0;
 				motion.velocity.y += vy;
 		}
+		else {
+			runSound.pause();
+			walkSound.pause();
+		}
 	};
 } )();
 
@@ -241,8 +245,12 @@ var start = function ( gameLoop, gameViewportSize ) {
 
 		// Fade out title
 		var title = scene.getObjectByName("title");
-		if (title && title.material.opacity > 0)
-			title.material.opacity -= 0.003
+		var subtitle = scene.getObjectByName("subtitle");
+		if (title && subtitle && title.material.opacity > 0) {
+			title.material.opacity -= 0.003;
+			subtitle.material.opacity -= 0.003;
+		}
+
 	};
 	requestAnimationFrame( render )
 };
