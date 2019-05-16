@@ -2,6 +2,8 @@
 
 if (!Detector.webgl) Detector.addGetWebGLMessage();
 
+var scene;
+
 var runSound;
 var walkSound;
 var beepSound;
@@ -72,7 +74,7 @@ var checkHealth = function () {
 }
 
 var keyboardControls = ( function () {
-	var keys = { SP: 32, W: 87, A: 65, S: 83, D: 68, UP: 38, LT: 37, DN: 40, RT: 39 };
+	var keys = { SP: 32, W: 87, A: 65, S: 83, D: 68, UP: 38, LT: 37, DN: 40, RT: 39, T: 84, G: 71 };
 	var keysPressed = {};
 	( function ( watchedKeyCodes ) {
 		var handler = function ( down ) {
@@ -92,11 +94,25 @@ var keyboardControls = ( function () {
 		window.addEventListener( "keydown", handler( true ), false );
 		window.addEventListener( "keyup", handler( false ), false );
 	} )( [
-		keys.SP, keys.W, keys.A, keys.S, keys.D, keys.UP, keys.LT, keys.DN, keys.RT
+		keys.SP, keys.W, keys.A, keys.S, keys.D, keys.UP, keys.LT, keys.DN, keys.RT, keys.T, keys.G
 	] );
 	var forward = new THREE.Vector3();
 	var sideways = new THREE.Vector3();
 	return function (event) {
+		if (keysPressed [ keys.T ] && villainName != "trump") {
+			scene.remove(scene.getObjectByName("villain"));
+			villainName = "trump";
+			villainScale = 1;
+			villainY = 2.5;
+			addVillain(scene);
+		}
+		if (keysPressed [ keys.G ] && villainName != "ghost") {
+			scene.remove(scene.getObjectByName("villain"));
+			villainName = "ghost";
+			villainScale = 0.01;
+			villainY = 0;
+			addVillain(scene);
+		}
 		if ( ! motion.airborne ) {
 			// look around
 			var sx = keysPressed[ keys.UP ] ? 0.03 : ( keysPressed[ keys.DN ] ? - 0.03 : 0 );
@@ -223,7 +239,7 @@ flashlight.penumbra = 0.2
 flashlight.distance = 100;
 flashlight.castShadow = true;
 flashlight.decay = 3;
-var scene = getScene();
+scene = getScene();
 scene.add(flashlight);
 scene.add(flashlight.target);
 
