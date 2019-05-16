@@ -1,5 +1,5 @@
 var NUMFRAMES = 60; // villain changes direction every NUMFRAMES frames
-var ALPHA = 0.6 // probability of villain moving towards player, rather than going in a random direction (should be > 0.5)
+var ALPHA = 0.8; // probability of villain moving towards player, rather than going in a random direction (should be > 0.5)
 var SPEED = 0.2;
 
 var villainName = "ghost";
