@@ -9,6 +9,15 @@
 	</head>
 
 	<body>
+		<div id="loading">
+			<div class="lds-dual-ring"></div>
+		</div>
+		<script>
+			setTimeout(function() {
+				document.getElementById("loading").style.display = "none";
+			}, 5200);
+		</script>
+
     <script src="libjs/three.min.js"></script>
 		<script src="libjs/Detector.js"></script>
 		<script src="libjs/stats.min.js"></script>
@@ -43,6 +52,7 @@
 			}
 		</script>
 
+		<script src="js/villain.js"></script>
 		<script src="js/scene.js"></script>
     <script src="js/game.js"></script>
 
@@ -51,7 +61,7 @@
 			<img id="apple_pic" src="pics/apple.png" alt="Apples">
 		</div>
 		<div id="health_div">
-			<p id="health_amount">0</p>
+			<p id="health_amount">100</p>
 		</div>
 	</body>
 </html>

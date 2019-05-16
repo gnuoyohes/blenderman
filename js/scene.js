@@ -1,7 +1,15 @@
-var apples = [];
-var NUMAPPLES = 200;
+var NUMAPPLES = 20;
+var NUMTREES = 800;
+var MAPRADIUS = 200;
 
-function buildGround() {
+var platform;
+var moon;
+var apples = [];
+var title;
+var subtitle;
+
+
+function addGround(scene) {
   var groundTexture = new THREE.TextureLoader().load("textures/terrain/grasslight-big.jpg");
   groundTexture.wrapS = THREE.RepeatWrapping;
   groundTexture.wrapT = THREE.RepeatWrapping;
@@ -14,7 +22,8 @@ function buildGround() {
   ground.rotation.x = -0.5 * Math.PI;
   ground.name = "ground";
   ground.receiveShadow = true;
-  return ground;
+  scene.add(ground);
+  platform = ground;
 }
 
 // borrowed from https://github.com/IceCreamYou/THREE.Terrain
@@ -53,11 +62,12 @@ function buildTree() {
   m.scale.x = m.scale.z = 5;
   m.scale.y = 1.25;
   m.castShadow = true;
+
   return m;
 }
 
 // borrowed from https://github.com/CoryG89/MoonDemo
-function buildMoon() {
+function addMoon(scene) {
   var radius = 80;
   var xSegments = 50;
   var ySegments = 50;
@@ -67,11 +77,12 @@ function buildMoon() {
   var mesh = new THREE.Mesh(geo, mat);
   mesh.position.set(-1000, 500, -1000);
   mesh.rotation.set(0, 180, 0);
-  return mesh;
+  scene.add(mesh);
+  moon = mesh;
 }
 
 // borrowed from https://github.com/CoryG89/MoonDemo
-function buildSky() {
+function addSky(scene) {
   var envMap = new THREE.CubeTextureLoader().load( [
 			'textures/starfield/right.png', // right
 			'textures/starfield/left.png', // left
@@ -80,7 +91,7 @@ function buildSky() {
 			'textures/starfield/back.png', // back
 			'textures/starfield/front.png' // front
 		] );
-	return envMap;
+	scene.background = envMap;
 }
 
 function addTitleText(scene) {
@@ -100,6 +111,7 @@ function addTitleText(scene) {
     text.position.set(-1.25, 3, -4);
     text.name = "title"
     scene.add(text);
+    title = text;
   });
 
   fontLoader.load( 'fonts/optimer_regular.typeface.json', function ( font ) {
@@ -115,10 +127,11 @@ function addTitleText(scene) {
     text.position.set(-0.9, 2.5, -4);
     text.name = "subtitle"
     scene.add(text);
+    subtitle = text;
   });
 }
 
-function addApple(scene, position, name) {
+function addApple(scene, position) {
   var loader = new THREE.GLTFLoader();
 
   loader.load( 'models/apple/scene.gltf', function ( gltf ) {
@@ -126,6 +139,7 @@ function addApple(scene, position, name) {
     gltf.scene.scale.set(0.03, 0.03, 0.03);
     gltf.scene.name = name;
   	scene.add( gltf.scene );
+    apples.push(gltf.scene);
   }, undefined, function ( error ) {
   	console.error( error );
   } );
@@ -133,17 +147,17 @@ function addApple(scene, position, name) {
 
 function getScene() {
   var scene = new THREE.Scene();
-  scene.background = buildSky();
-  scene.add(buildMoon());
-  scene.add(buildGround());
+  addSky(scene);
+  addMoon(scene);
+  addGround(scene);
 
   var appleCount = 0;
 
   // randomly generate trees and apples
-  for (i=0; i<500; i++) {
+  for (i=0; i<NUMTREES; i++) {
     var tree = buildTree();
-    let xPos = Math.random()*400-200;
-    let zPos = Math.random()*400-200;
+    let xPos = Math.random()*MAPRADIUS*2-MAPRADIUS;
+    let zPos = Math.random()*MAPRADIUS*2-MAPRADIUS;
     let xScale = Math.random()*.5+.25;
     let yScale = Math.random()*.5+.25;
     let zScale = Math.random()*.5+.25;
@@ -164,12 +178,12 @@ function getScene() {
       else
         appleZ = zPos-2*zScale;
       let applePos = new THREE.Vector3(appleX, appleY, appleZ);
-      let appleName = "apple"+appleCount;
-      apples.push([applePos, appleName]);
-      addApple(scene, applePos, "apple"+appleCount);
+      addApple(scene, applePos);
       appleCount++;
     }
   }
+
+  addVillain(scene);
 
   moonlight = new THREE.DirectionalLight(0xe0d2c5, 0.07);
   moonlight.position.set(-1000, 500, -1000); // Sun on the sky texture
