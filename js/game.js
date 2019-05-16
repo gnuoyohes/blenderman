@@ -27,6 +27,8 @@ motion.position.y = -150;
 
 
 var resetGame = function () {
+	speed = INITSPEED;
+	alpha = INITALPHA;
 	motion.health = 100;
 	applesGot = 0;
 	scene = getScene();
@@ -252,8 +254,8 @@ var appleGet = function () {
 			scene.remove(apples[i]);
 			apples.splice(i, 1);
 			applesGot++;
-			ALPHA += 0.01;
-			SPEED += 0.01;
+			alpha += 0.01;
+			speed += 0.01;
 			document.getElementById("apple_count").innerHTML = applesGot;
 		}
 	}

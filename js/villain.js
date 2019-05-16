@@ -1,10 +1,13 @@
 var NUMFRAMES = 60; // villain changes direction every NUMFRAMES frames
-var ALPHA = 0.7; // probability of villain moving towards player, rather than going in a random direction (should be > 0.5)
-var SPEED = 0.2;
+var INITALPHA = 0.7; // probability of villain moving towards player, rather than going in a random direction (should be > 0.5)
+var INITSPEED = 0.2;
 
 var villainName = "ghost";
 var villainScale = 0.01;
 var villainY = 0;
+
+var alpha = INITALPHA;
+var speed = INITSPEED;
 
 var villain;
 
@@ -28,7 +31,7 @@ var moveVillain = function () {
 	if (frameCount == NUMFRAMES) { // change direction
 		var dirToPlayer = new THREE.Vector3().subVectors(motion.position, villain.position).setY(0).normalize();
 		var randDir = new THREE.Vector3(Math.random()*2-1, 0, Math.random()*2-1).normalize();
-		if (Math.random() <= ALPHA)
+		if (Math.random() <= alpha)
 			vmotion.direction.copy(dirToPlayer);
 		else
 			vmotion.direction.copy(randDir);
@@ -36,7 +39,7 @@ var moveVillain = function () {
 	}
 
 	var newPos = villain.position.clone();
-	newPos.addScaledVector(vmotion.direction, SPEED);
+	newPos.addScaledVector(vmotion.direction, speed);
 	villain.lookAt(newPos);
 	villain.position.copy(newPos);
 	vmotion.distSq = villain.position.distanceToSquared(motion.position);
